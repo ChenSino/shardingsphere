@@ -1,0 +1,54 @@
+server:
+  port: 8088
+#spring:
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://192.168.1.105:33061/test_db?serverTimezone=UTC&characterEncoding=utf-8&useSSL=false
+#    username: root
+#    password: 123456
+
+
+spring:
+  shardingsphere:
+    datasource:
+      names: ds0, ds1
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.Driver
+        url: jdbc:mysql://192.168.1.105:33061/test_db?serverTimezone=UTC&characterEncoding=utf-8&useSSL=false
+        username: root
+        password: 123456
+      ds1:
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.Driver
+        url: jdbc:mysql://192.168.1.105:33061/test_db?serverTimezone=UTC&characterEncoding=utf-8&useSSL=false
+        username: root
+        password: 123456
+
+    props:
+      sql-show: true
+    rules:
+      readwrite-splitting:
+        data-sources:
+          my_ds: # 自定义的数据源名称
+            static-strategy:
+              write-data-source-name: ds0  # 指定写入数据源
+              read-data-source-names: ds1  # 指定读取数据源列表
+#            load-balancer-name: RANDOM # 负载均衡策略
+#      sharding:
+#        tables:
+#          user:
+#            actual-data-nodes: ds$->{0..1}.user$->{0..1}
+#            database-strategy:
+#              standard:
+#                sharding-column: user_id
+#                sharding-algorithm-name: user_inline
+#            table-strategy:
+#              standard:
+#                sharding-column: user_id
+#                sharding-algorithm-name: user_inline
+#        sharding-algorithms:
+#          user_inline:
+#            type: HASH_MOD
+#            props:
+#              sharding-count: 2
